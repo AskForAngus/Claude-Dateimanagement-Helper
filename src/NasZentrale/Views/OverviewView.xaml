@@ -16,7 +16,7 @@
                        Text="Wähle einen Benutzer oder eine Gruppe – rechts siehst du alle Ordner und den Zugriff." />
             <ui:TextBox DockPanel.Dock="Top" x:Name="SearchBox" PlaceholderText="Benutzer oder Gruppe suchen"
                         Icon="{ui:SymbolIcon Search24}" TextChanged="SearchBox_TextChanged" Margin="0,0,0,8" />
-            <ui:Button DockPanel.Dock="Top" x:Name="AllFoldersButton" Content="Alle Ordner mit eigenen Rechten"
+            <ui:Button DockPanel.Dock="Top" x:Name="AllFoldersButton" Content="Ordner mit eigenen Rechten"
                        Icon="{ui:SymbolIcon ShieldCheckmark24}" Appearance="Transparent" HorizontalAlignment="Stretch"
                        HorizontalContentAlignment="Left" Margin="0,0,0,6" Click="AllFolders_Click" />
             <ListBox x:Name="PrincipalList" SelectionChanged="PrincipalList_SelectionChanged">

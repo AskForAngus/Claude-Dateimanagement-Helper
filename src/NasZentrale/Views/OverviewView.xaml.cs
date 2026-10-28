@@ -12,7 +12,7 @@ namespace NasZentrale.Views;
 
 public sealed record OverviewRow(string Path, string Dataset, string Folder, SymbolRegular Icon, string LevelText, int LevelSort, Brush ChipBrush, string Detail)
 {
-    public string SortKey => Dataset + "/" + Folder;
+    public string SortKey => Path;
 }
 
 /// <summary>„Wer darf wo?“ – Übersicht über alle Stellen mit Rechten, je Benutzer oder Gruppe.</summary>
@@ -92,7 +92,7 @@ public partial class OverviewView : UserControl, IPage
         try
         {
             var progress = new Progress<string>(s => ScanText.Text = s);
-            S.Index = await AccessIndex.BuildAsync(S.Nas, S.Datasets, progress, _scanCts.Token);
+            S.Index = await AccessIndex.BuildAsync(S.Nas, S.Datasets.Where(d => d.Name.Contains('/')), progress, _scanCts.Token);
             StaleBar.IsOpen = false;
         }
         catch (OperationCanceledException) { }
@@ -183,8 +183,9 @@ public partial class OverviewView : UserControl, IPage
 
     private static OverviewRow Row(IndexedFolder f, string level, int sort, Brush brush, string detail)
     {
-        var dataset = NasPath.Name(f.DatasetMount);
-        var folder = f.IsDatasetRoot ? "" : "› " + NasPath.Relative(f.Path, f.DatasetMount).Replace("/", " › ");
+        // Dataset-Wurzel: Name normal; Unterordner: Dataset grau davor.
+        var dataset = f.IsDatasetRoot ? "" : NasPath.Name(f.DatasetMount);
+        var folder = f.IsDatasetRoot ? NasPath.Name(f.DatasetMount) : "› " + NasPath.Relative(f.Path, f.DatasetMount).Replace("/", " › ");
         return new OverviewRow(f.Path, dataset, folder, f.IsDatasetRoot ? SymbolRegular.Database24 : SymbolRegular.Folder24, level, sort, brush, detail);
     }
 

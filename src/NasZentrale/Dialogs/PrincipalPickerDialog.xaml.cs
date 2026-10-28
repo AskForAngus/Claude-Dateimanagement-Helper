@@ -78,11 +78,6 @@ public partial class PrincipalPickerDialog : FluentWindow
             List.SelectedIndex = Math.Max(List.SelectedIndex - 1, 0);
             e.Handled = true;
         }
-        else if (e.Key == Key.Enter && List.SelectedItem != null)
-        {
-            Ok_Click(sender, e);
-            e.Handled = true;
-        }
     }
 
     private void List_SelectionChanged(object sender, SelectionChangedEventArgs e) => OkButton.IsEnabled = List.SelectedItem != null;

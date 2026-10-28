@@ -56,7 +56,7 @@
                 BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
             <DockPanel>
                 <ui:Button DockPanel.Dock="Right" x:Name="OkButton" Content="Auswählen" MinWidth="110" Appearance="Primary"
-                           IsEnabled="False" Click="Ok_Click" />
+                           IsEnabled="False" IsDefault="True" Click="Ok_Click" />
                 <ui:Button DockPanel.Dock="Right" Content="Abbrechen" Margin="0,0,8,0" MinWidth="110" IsCancel="True" />
                 <ui:Button Content="Liste neu laden" Appearance="Transparent" Icon="{ui:SymbolIcon ArrowSync24}"
                            HorizontalAlignment="Left" Click="Reload_Click" ToolTip="Benutzer und Gruppen erneut vom NAS laden" />

@@ -9,7 +9,7 @@ public partial class ShareEditDialog : FluentWindow
 {
     private readonly SmbShare? _existing;
 
-    public ShareEditDialog(SmbShare? existing)
+    public ShareEditDialog(SmbShare? existing, string? presetPath = null)
     {
         InitializeComponent();
         Helpers.DialogSizing.Attach(this);
@@ -33,6 +33,11 @@ public partial class ShareEditDialog : FluentWindow
             EnabledSwitch.IsChecked = existing.Enabled;
             AbeBox.IsChecked = existing.AccessBasedEnumeration == true;
             ReadOnlyBox.IsChecked = existing.ReadOnly == true;
+        }
+        if (existing == null && presetPath != null)
+        {
+            PathBox.Text = presetPath;
+            NameBox.Text = Core.Paths.NasPath.Name(presetPath);
         }
         Loaded += (_, _) => NameBox.Focus();
         UpdatePreview();

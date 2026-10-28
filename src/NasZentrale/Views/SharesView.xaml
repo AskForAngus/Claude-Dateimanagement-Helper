@@ -93,7 +93,11 @@
                                     <ProgressBar Value="{Binding UsedPercent, Mode=OneWay}" Maximum="100" Height="4" />
                                     <TextBlock Text="{Binding UsageText}" Style="{StaticResource Hint}" Margin="0,4,0,0" />
                                 </StackPanel>
-                                <ui:Button Grid.Column="3" Content="Öffnen" Icon="{ui:SymbolIcon FolderOpen24}" Tag="{Binding}" Click="OpenDataset_Click" />
+                                <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                    <ui:Button Content="Freigeben" Icon="{ui:SymbolIcon Share24}" Margin="0,0,6,0" Tag="{Binding}" Click="ShareDataset_Click"
+                                               Visibility="{Binding Shared, Converter={StaticResource Hidden}}" ToolTip="Als Windows-Freigabe im Netzwerk bereitstellen" />
+                                    <ui:Button Content="Öffnen" Icon="{ui:SymbolIcon FolderOpen24}" Tag="{Binding}" Click="OpenDataset_Click" />
+                                </StackPanel>
                             </Grid>
                         </Border>
                     </DataTemplate>

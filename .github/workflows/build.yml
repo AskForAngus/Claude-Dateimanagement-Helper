@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Tests
+        run: dotnet test tests/NasZentrale.Core.Tests -c Release
+
+      - name: Einzelne .exe erstellen
+        run: dotnet publish src/NasZentrale -c Release -r win-x64 -p:DebugType=none -o publish
+
+      - name: Als Build-Ergebnis bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: NAS-Zentrale
+          path: publish/NAS-Zentrale.exe
+
+      - name: Release veröffentlichen (bei Tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: publish/NAS-Zentrale.exe

@@ -71,9 +71,16 @@ public partial class SharesView : UserControl, IPage
         if (RowOf<DatasetRow>(sender) is { } row) Ui.Main?.OpenFolder(row.Mountpoint);
     }
 
-    private async void NewShare_Click(object sender, RoutedEventArgs e)
+    private void NewShare_Click(object sender, RoutedEventArgs e) => CreateShare(null);
+
+    private void ShareDataset_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = Ui.Prepare(new ShareEditDialog(null));
+        if (RowOf<DatasetRow>(sender) is { } row) CreateShare(row.Mountpoint);
+    }
+
+    private async void CreateShare(string? path)
+    {
+        var dlg = Ui.Prepare(new ShareEditDialog(null, path));
         if (dlg.ShowDialog() != true) return;
         SmbShare? created = null;
         var ok = await Ui.RunAsync("Freigabe wird angelegt …", async _ =>
