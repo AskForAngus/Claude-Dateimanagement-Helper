@@ -1,0 +1,40 @@
+<ui:FluentWindow x:Class="NasZentrale.Dialogs.FolderPickerDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:m="clr-namespace:NasZentrale.Models"
+                 Width="520" Height="600" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+                 ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar x:Name="TitleBar" ShowMinimize="False" ShowMaximize="False" />
+        <StackPanel Grid.Row="1" Margin="24,4,24,10">
+            <TextBlock x:Name="Heading" Style="{StaticResource SectionTitle}" />
+            <TextBlock x:Name="SelectedText" Style="{StaticResource Hint}" Margin="0,4,0,0" />
+        </StackPanel>
+        <Border Grid.Row="2" Style="{StaticResource Panel}" Margin="24,0,24,12" Padding="4">
+            <TreeView x:Name="Tree" Background="Transparent" BorderThickness="0" SelectedItemChanged="Tree_SelectedItemChanged">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type m:FolderNode}" ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <ui:SymbolIcon Symbol="{Binding Icon}" Filled="True" FontSize="16" Margin="0,0,8,0" Foreground="#F2B33D" />
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </Border>
+        <Border Grid.Row="3" Background="{DynamicResource LayerFillColorDefaultBrush}" Padding="24,14"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Content="Abbrechen" Margin="0,0,8,0" MinWidth="110" IsCancel="True" />
+                <ui:Button x:Name="OkButton" Content="Auswählen" MinWidth="110" Appearance="Primary" IsEnabled="False" Click="Ok_Click" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</ui:FluentWindow>

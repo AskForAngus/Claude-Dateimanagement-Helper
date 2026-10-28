@@ -1,0 +1,62 @@
+<ui:FluentWindow x:Class="NasZentrale.Dialogs.ShareAclDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Width="640" SizeToContent="Height" MaxHeight="720" ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+                 ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar x:Name="TitleBar" ShowMinimize="False" ShowMaximize="False" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,4,24,20">
+                <TextBlock x:Name="Heading" Style="{StaticResource SectionTitle}" />
+                <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,14" FontSize="13"
+                           Text="Freigabeberechtigungen legen fest, wer die Freigabe im Netzwerk überhaupt benutzen darf – zusätzlich zu den Ordnerrechten. Es gilt jeweils das Strengere. Empfehlung: „Jeder – Vollzugriff“ und alles Weitere über die Ordnerrechte steuern." />
+
+                <ItemsControl x:Name="EntryList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="130" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Who}" Style="{StaticResource Strong}" VerticalAlignment="Center" />
+                                    <ComboBox Grid.Column="1" SelectedIndex="{Binding PermIndex}" Margin="8,0,0,0">
+                                        <ComboBoxItem Content="Lesen" />
+                                        <ComboBoxItem Content="Ändern" />
+                                        <ComboBoxItem Content="Vollzugriff" />
+                                    </ComboBox>
+                                    <ComboBox Grid.Column="2" SelectedIndex="{Binding DenyIndex}" Margin="8,0,0,0">
+                                        <ComboBoxItem Content="Zulassen" />
+                                        <ComboBoxItem Content="Verweigern" />
+                                    </ComboBox>
+                                    <ui:Button Grid.Column="3" Icon="{ui:SymbolIcon Delete24}" Margin="8,0,0,0" ToolTip="Entfernen"
+                                               Tag="{Binding}" Click="Remove_Click" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock x:Name="EmptyText" Text="Keine Einträge – niemand kann die Freigabe benutzen." Style="{StaticResource Hint}"
+                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" Margin="0,4" />
+                <ui:Button Content="Benutzer oder Gruppe hinzufügen" Icon="{ui:SymbolIcon PersonAdd24}" Margin="0,8,0,0" Click="Add_Click" />
+            </StackPanel>
+        </ScrollViewer>
+        <Border Grid.Row="2" Background="{DynamicResource LayerFillColorDefaultBrush}" Padding="24,14"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Content="Abbrechen" Margin="0,0,8,0" MinWidth="110" IsCancel="True" />
+                <ui:Button Content="Speichern" MinWidth="110" Appearance="Primary" Click="Ok_Click" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</ui:FluentWindow>

@@ -1,0 +1,221 @@
+<UserControl x:Class="NasZentrale.Views.RightsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:m="clr-namespace:NasZentrale.Models">
+    <DockPanel>
+        <!-- Kopf -->
+        <StackPanel DockPanel.Dock="Top" Margin="20,16,20,10">
+            <TextBlock Text="BERECHTIGUNGEN" Style="{StaticResource Hint}" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                <ui:SymbolIcon x:Name="ObjectIcon" Symbol="Folder24" FontSize="20" Margin="0,0,8,0" Filled="True"
+                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                <TextBlock x:Name="ObjectName" Style="{StaticResource Strong}" FontSize="16" MaxWidth="360" VerticalAlignment="Center" />
+            </StackPanel>
+            <TextBlock x:Name="PathText" Style="{StaticResource Hint}" Margin="0,2,0,0" />
+            <WrapPanel x:Name="Chips" Margin="0,8,0,0">
+                <Border x:Name="ChipOwn" Style="{StaticResource ChipAccent}" Visibility="Collapsed"
+                        ToolTip="Hier wurden Rechte direkt gesetzt (nicht nur von oben geerbt).">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="12" Margin="0,0,4,0" />
+                        <TextBlock Text="Eigene Rechte" Style="{StaticResource ChipText}" />
+                    </StackPanel>
+                </Border>
+                <Border x:Name="ChipInherits" Style="{StaticResource Chip}" Visibility="Collapsed"
+                        ToolTip="Alle Rechte kommen vom übergeordneten Ordner.">
+                    <TextBlock Text="Nur geerbte Rechte" Style="{StaticResource ChipText}" />
+                </Border>
+                <Border x:Name="ChipProtected" Style="{StaticResource ChipWarning}" Visibility="Collapsed"
+                        ToolTip="Änderungen an übergeordneten Ordnern wirken hier nicht.">
+                    <TextBlock Text="Vererbung deaktiviert" Style="{StaticResource ChipText}" />
+                </Border>
+                <Border x:Name="ChipNoShare" Style="{StaticResource Chip}" Visibility="Collapsed"
+                        ToolTip="Dieser Ordner liegt in keiner SMB-Freigabe.">
+                    <TextBlock Text="Nicht freigegeben" Style="{StaticResource ChipText}" />
+                </Border>
+            </WrapPanel>
+        </StackPanel>
+
+        <!-- Speichern-Leiste -->
+        <Border x:Name="SaveBar" DockPanel.Dock="Bottom" Visibility="Collapsed" Padding="20,12"
+                Background="{DynamicResource SystemFillColorAttentionBackgroundBrush}">
+            <StackPanel>
+                <TextBlock Text="Ungespeicherte Änderungen" FontWeight="SemiBold" Margin="0,0,0,8" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ui:Button Content="Verwerfen" Margin="0,0,8,0" Click="Discard_Click" />
+                    <ui:Button Content="Prüfen &amp; speichern" Appearance="Primary" Icon="{ui:SymbolIcon Save24}" Click="Save_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Grid>
+            <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" Padding="20,0,20,16">
+                <StackPanel x:Name="Body">
+                    <ui:InfoBar x:Name="NotNfsBar" Severity="Warning" IsClosable="False" IsOpen="False" Margin="0,0,0,12"
+                                Title="Keine Windows-Rechte"
+                                Message="Dieses Dataset nutzt keine NFSv4-ACLs. Windows-Rechte lassen sich hier nicht pflegen. Lege für Windows-Freigaben ein Dataset mit dem Freigabetyp „SMB“ an." />
+
+                    <!-- Besitzer & Vererbung -->
+                    <Border x:Name="OwnerPanel" Style="{StaticResource Panel}" Padding="14,10" Margin="0,0,0,12">
+                        <StackPanel>
+                            <DockPanel>
+                                <ui:Button DockPanel.Dock="Right" Content="Ändern" Appearance="Transparent" Padding="8,4"
+                                           Click="ChangeOwner_Click" ToolTip="Besitzer oder Besitzergruppe ändern" />
+                                <StackPanel>
+                                    <TextBlock Text="Besitzer" Style="{StaticResource Hint}" />
+                                    <TextBlock x:Name="OwnerText" TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                            </DockPanel>
+                            <Border Height="1" Background="{DynamicResource DividerStrokeColorDefaultBrush}" Margin="0,10" />
+                            <DockPanel>
+                                <ui:ToggleSwitch x:Name="InheritSwitch" DockPanel.Dock="Right" Click="InheritSwitch_Click" />
+                                <StackPanel Margin="0,0,12,0">
+                                    <TextBlock Text="Rechte von oben erben" />
+                                    <TextBlock x:Name="InheritHint" Style="{StaticResource Hint}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Einträge -->
+                    <TextBlock Text="Wer hat Zugriff?" Style="{StaticResource SectionTitle}" Margin="0,4,0,8" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <ui:Button x:Name="AddButton" Icon="{ui:SymbolIcon PersonAdd24}" Content="Hinzufügen"
+                                   Margin="0,0,6,0" Click="Add_Click" ToolTip="Benutzer oder Gruppe aus dem AD hinzufügen" />
+                        <ui:Button Icon="{ui:SymbolIcon PersonSearch24}" Appearance="Transparent" Content="Zugriff prüfen"
+                                   ToolTip="Prüfen, welche Rechte ein Benutzer hier tatsächlich hat" Click="CheckAccess_Click" />
+                    </StackPanel>
+
+                    <ListBox x:Name="AceList" SelectionChanged="AceList_SelectionChanged" Background="Transparent"
+                             BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             PreviewMouseWheel="AceList_PreviewMouseWheel">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:AceItem}">
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="{Binding Icon}" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource Strong}" />
+                                        <TextBlock Text="{Binding Summary}" Style="{StaticResource Hint}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,0,0">
+                                        <Border Style="{StaticResource ChipDanger}" Visibility="{Binding IsDeny, Converter={StaticResource Visible}}">
+                                            <TextBlock Text="Verweigern" Style="{StaticResource ChipText}" />
+                                        </Border>
+                                        <Border Style="{StaticResource Chip}" Visibility="{Binding IsInherited, Converter={StaticResource Visible}}">
+                                            <TextBlock Text="geerbt" Style="{StaticResource ChipText}" />
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <TextBlock x:Name="NoEntriesText" Text="Keine Einträge – niemand hat Zugriff." Style="{StaticResource Hint}"
+                               Margin="4,8" Visibility="Collapsed" />
+
+                    <!-- Editor für den gewählten Eintrag -->
+                    <Border x:Name="Editor" Style="{StaticResource Panel}" Padding="16" Margin="0,12,0,0" Visibility="Collapsed">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="{Binding Icon}" FontSize="22" Margin="0,0,10,0" />
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource Strong}" FontSize="15" MaxWidth="330" />
+                                    <TextBlock Text="{Binding KindText}" Style="{StaticResource Hint}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Border Style="{StaticResource Chip}" Padding="10,8" Margin="0,12,0,0" HorizontalAlignment="Stretch"
+                                    Visibility="{Binding IsInherited, Converter={StaticResource Visible}}">
+                                <DockPanel>
+                                    <ui:Button DockPanel.Dock="Right" Content="Dort bearbeiten" Padding="8,3" Margin="8,0,0,0"
+                                               Click="GoToOrigin_Click"
+                                               Visibility="{Binding InheritedFromPath, Converter={StaticResource Visible}}" />
+                                    <StackPanel>
+                                        <TextBlock Text="Geerbter Eintrag – hier nicht änderbar." Style="{StaticResource Body}" FontSize="12" />
+                                        <TextBlock Style="{StaticResource Hint}" Visibility="{Binding InheritedFrom, Converter={StaticResource Visible}}">
+                                            <Run Text="Kommt von:" /> <Run Text="{Binding InheritedFrom, Mode=OneWay}" FontWeight="SemiBold" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+
+                            <Grid Margin="0,14,0,0" IsEnabled="{Binding IsEditable}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="84" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Art" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" SelectedIndex="{Binding TypeIndex}" Margin="0,0,0,8">
+                                    <ComboBoxItem Content="Zulassen" />
+                                    <ComboBoxItem Content="Verweigern" />
+                                </ComboBox>
+
+                                <TextBlock Grid.Row="1" Text="Gilt für" VerticalAlignment="Center"
+                                           Visibility="{Binding IsDirectory, Converter={StaticResource Visible}}" />
+                                <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,8"
+                                          ItemsSource="{Binding Source={x:Static m:AceItem.ApplyOptions}}"
+                                          SelectedItem="{Binding ApplyTo}"
+                                          Visibility="{Binding IsDirectory, Converter={StaticResource Visible}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource Label}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <TextBlock Grid.Row="2" Text="Vorlage" VerticalAlignment="Center" />
+                                <ComboBox Grid.Row="2" Grid.Column="1"
+                                          ItemsSource="{Binding Source={x:Static m:AceItem.Levels}}"
+                                          SelectedItem="{Binding Level}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource Label}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+
+                            <TextBlock Text="Einzelrechte" Style="{StaticResource Hint}" FontWeight="SemiBold" Margin="0,16,0,4" />
+                            <ItemsControl ItemsSource="{Binding Permissions}" IsEnabled="{Binding IsEditable}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type m:PermOption}">
+                                        <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked}" ToolTip="{Binding Hint}"
+                                                  Margin="0,1" MinHeight="28" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <CheckBox Content="Nur an direkte Unterordner/Dateien weitergeben" Margin="0,10,0,0"
+                                      IsChecked="{Binding OnlyDirectChildren}" IsEnabled="{Binding IsEditable}"
+                                      Visibility="{Binding CanLimitPropagation, Converter={StaticResource Visible}}"
+                                      ToolTip="Der Eintrag gilt nur eine Ebene tiefer, nicht für alle weiteren Ebenen." />
+
+                            <ui:Button Content="Eintrag entfernen" Icon="{ui:SymbolIcon Delete24}" Margin="0,14,0,0"
+                                       Click="Remove_Click" Visibility="{Binding IsEditable, Converter={StaticResource Visible}}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Leer / Laden -->
+            <StackPanel x:Name="EmptyPanel" Style="{StaticResource EmptyState}" Margin="24">
+                <ui:SymbolIcon Symbol="ShieldKeyhole24" FontSize="40" HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                <TextBlock Text="Wähle einen Ordner oder eine Datei, um die Rechte zu sehen." Style="{StaticResource Hint}"
+                           TextAlignment="Center" Margin="0,10,0,0" FontSize="13" />
+            </StackPanel>
+            <ui:ProgressRing x:Name="LoadingRing" IsIndeterminate="True" Visibility="Collapsed" />
+        </Grid>
+    </DockPanel>
+</UserControl>

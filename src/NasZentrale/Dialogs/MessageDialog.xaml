@@ -1,0 +1,33 @@
+<ui:FluentWindow x:Class="NasZentrale.Dialogs.MessageDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Width="480" SizeToContent="Height" ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+                 ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar x:Name="TitleBar" ShowMinimize="False" ShowMaximize="False" />
+        <StackPanel Grid.Row="1" Margin="24,8,24,20">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <ui:SymbolIcon x:Name="HeadingIcon" FontSize="24" Margin="0,0,10,0" Visibility="Collapsed" />
+                <TextBlock x:Name="Heading" Style="{StaticResource SectionTitle}" TextWrapping="Wrap" VerticalAlignment="Center" MaxWidth="390" />
+            </StackPanel>
+            <TextBlock x:Name="Message" Style="{StaticResource Body}" />
+            <TextBox x:Name="Details" Margin="0,12,0,0" MaxHeight="220" IsReadOnly="True" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto" Visibility="Collapsed" FontSize="12" />
+        </StackPanel>
+        <Border Grid.Row="2" Background="{DynamicResource LayerFillColorDefaultBrush}" Padding="24,14"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button x:Name="TertiaryButton" Margin="0,0,8,0" MinWidth="110" Visibility="Collapsed" Click="Tertiary_Click" />
+                <ui:Button x:Name="SecondaryButton" Margin="0,0,8,0" MinWidth="110" Click="Secondary_Click" IsCancel="True" />
+                <ui:Button x:Name="PrimaryButton" MinWidth="110" Appearance="Primary" Click="Primary_Click" IsDefault="True" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</ui:FluentWindow>

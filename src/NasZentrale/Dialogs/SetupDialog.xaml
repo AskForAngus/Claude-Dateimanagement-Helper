@@ -1,0 +1,49 @@
+<ui:FluentWindow x:Class="NasZentrale.Dialogs.SetupDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="Gemeinsames Protokoll einrichten" Width="560" SizeToContent="Height" ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+                 ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar Title="Einrichtung" ShowMinimize="False" ShowMaximize="False" />
+        <StackPanel Grid.Row="1" Margin="28,4,28,24">
+            <TextBlock Text="Gemeinsames Protokoll einrichten" Style="{StaticResource SectionTitle}" FontSize="20" />
+            <TextBlock Style="{StaticResource Body}" Margin="0,8,0,18" FontSize="13"
+                       Text="Damit alle Admins sehen, wer wann was geändert hat (und Änderungen rückgängig machen können), wird das Protokoll auf dem NAS gespeichert. Wähle dafür einen Ordner in einer Freigabe – darin entsteht ein versteckter Ordner „.nas-zentrale“, auf den nur die Admin-Gruppe Zugriff hat. Hat ein anderer Admin das schon eingerichtet, wähle denselben Ordner." />
+
+            <TextBlock Text="Ordner auf dem NAS" Margin="0,0,0,6" />
+            <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Content="Auswählen …" Margin="8,0,0,0" Click="PickFolder_Click" />
+                <ui:TextBox x:Name="FolderBox" IsReadOnly="True" PlaceholderText="z. B. das Dataset „Verwaltung“" />
+            </DockPanel>
+
+            <TextBlock Text="Admin-Gruppe (AD)" Margin="0,14,0,6" />
+            <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Content="Auswählen …" Margin="8,0,0,0" Click="PickGroup_Click" />
+                <ui:TextBox x:Name="GroupBox" IsReadOnly="True" PlaceholderText="z. B. FIRMA\NAS-Admins" />
+            </DockPanel>
+            <TextBlock Style="{StaticResource Hint}" Margin="0,4,0,0"
+                       Text="Am besten dieselbe Gruppe, der in TrueNAS die Admin-Rechte gegeben wurden." />
+
+            <StackPanel x:Name="BusyPanel" Orientation="Horizontal" Margin="0,16,0,0" Visibility="Collapsed">
+                <ui:ProgressRing IsIndeterminate="True" Width="18" Height="18" />
+                <TextBlock x:Name="BusyText" Margin="10,0,0,0" VerticalAlignment="Center" />
+            </StackPanel>
+        </StackPanel>
+        <Border Grid.Row="2" Background="{DynamicResource LayerFillColorDefaultBrush}" Padding="28,14"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <DockPanel>
+                <ui:Button DockPanel.Dock="Right" x:Name="OkButton" Content="Einrichten" MinWidth="120" Appearance="Primary"
+                           IsEnabled="False" Click="Ok_Click" />
+                <ui:Button DockPanel.Dock="Right" x:Name="LaterButton" Content="Später" Margin="0,0,8,0" MinWidth="110" Click="Later_Click" />
+                <TextBlock Text="Bis dahin wird nur auf diesem PC protokolliert." Style="{StaticResource Hint}" VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+    </Grid>
+</ui:FluentWindow>

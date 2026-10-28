@@ -1,0 +1,49 @@
+<ui:FluentWindow x:Class="NasZentrale.Dialogs.ShareEditDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Width="520" SizeToContent="Height" ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+                 ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar x:Name="TitleBar" ShowMinimize="False" ShowMaximize="False" />
+        <StackPanel Grid.Row="1" Margin="24,4,24,20">
+            <TextBlock x:Name="Heading" Style="{StaticResource SectionTitle}" Margin="0,0,0,16" />
+
+            <TextBlock Text="Name der Freigabe" Margin="0,0,0,6" />
+            <ui:TextBox x:Name="NameBox" PlaceholderText="z. B. Buchhaltung" TextChanged="Field_Changed" />
+            <TextBlock x:Name="UncPreview" Style="{StaticResource Hint}" Margin="0,4,0,0" />
+
+            <TextBlock Text="Ordner auf dem NAS" Margin="0,14,0,6" />
+            <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Content="Auswählen …" Margin="8,0,0,0" Click="Pick_Click" />
+                <ui:TextBox x:Name="PathBox" IsReadOnly="True" PlaceholderText="Ordner auswählen" />
+            </DockPanel>
+
+            <TextBlock Text="Beschreibung (optional)" Margin="0,14,0,6" />
+            <ui:TextBox x:Name="CommentBox" />
+
+            <DockPanel Margin="0,16,0,0">
+                <ui:ToggleSwitch x:Name="EnabledSwitch" DockPanel.Dock="Right" IsChecked="True" />
+                <TextBlock Text="Freigabe aktiv" VerticalAlignment="Center" />
+            </DockPanel>
+            <CheckBox x:Name="AbeBox" Margin="0,12,0,0" Content="Nur Ordner anzeigen, auf die der Benutzer Zugriff hat"
+                      ToolTip="Zugriffsbasierte Aufzählung (ABE): Ordner ohne Leserecht sind für Benutzer unsichtbar." />
+            <CheckBox x:Name="ReadOnlyBox" Margin="0,8,0,0" Content="Schreibgeschützt (niemand kann über diese Freigabe ändern)" />
+
+            <TextBlock x:Name="ErrorText" Margin="0,12,0,0" Foreground="{DynamicResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Visibility="Collapsed" />
+        </StackPanel>
+        <Border Grid.Row="2" Background="{DynamicResource LayerFillColorDefaultBrush}" Padding="24,14"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Content="Abbrechen" Margin="0,0,8,0" MinWidth="110" IsCancel="True" />
+                <ui:Button x:Name="OkButton" MinWidth="110" Appearance="Primary" IsDefault="True" Click="Ok_Click" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</ui:FluentWindow>

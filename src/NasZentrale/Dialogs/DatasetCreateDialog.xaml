@@ -1,0 +1,39 @@
+<ui:FluentWindow x:Class="NasZentrale.Dialogs.DatasetCreateDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="Neues Dataset" Width="520" SizeToContent="Height" ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+                 ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar Title="Neues Dataset" ShowMinimize="False" ShowMaximize="False" />
+        <StackPanel Grid.Row="1" Margin="24,4,24,20">
+            <TextBlock Text="Neues Dataset" Style="{StaticResource SectionTitle}" />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,16" FontSize="13"
+                       Text="Ein Dataset ist ein eigener Speicherbereich auf dem NAS (mit eigenen Snapshots und Kontingenten). Es wird automatisch für Windows-Freigaben eingerichtet (NFSv4-Rechte, Groß-/Kleinschreibung wie unter Windows)." />
+
+            <TextBlock Text="Anlegen in" Margin="0,0,0,6" />
+            <ComboBox x:Name="ParentBox" SelectionChanged="Field_Changed" />
+
+            <TextBlock Text="Name" Margin="0,14,0,6" />
+            <ui:TextBox x:Name="NameBox" PlaceholderText="z. B. Projekte" TextChanged="Field_Changed" />
+            <TextBlock x:Name="PreviewText" Style="{StaticResource Hint}" Margin="0,4,0,0" />
+
+            <CheckBox x:Name="ShareBox" Content="Gleich als Windows-Freigabe mit demselben Namen anlegen" IsChecked="True" Margin="0,16,0,0" />
+
+            <TextBlock x:Name="ErrorText" Margin="0,12,0,0" Foreground="{DynamicResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Visibility="Collapsed" />
+        </StackPanel>
+        <Border Grid.Row="2" Background="{DynamicResource LayerFillColorDefaultBrush}" Padding="24,14"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Content="Abbrechen" Margin="0,0,8,0" MinWidth="110" IsCancel="True" />
+                <ui:Button Content="Anlegen" MinWidth="110" Appearance="Primary" IsDefault="True" Click="Ok_Click" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</ui:FluentWindow>
