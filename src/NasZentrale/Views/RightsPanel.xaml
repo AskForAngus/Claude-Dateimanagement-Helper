@@ -86,7 +86,7 @@
                                    ToolTip="Prüfen, welche Rechte ein Benutzer hier tatsächlich hat" Click="CheckAccess_Click" />
                     </StackPanel>
 
-                    <ListBox x:Name="AceList" SelectionChanged="AceList_SelectionChanged" Background="Transparent"
+                    <ListBox x:Name="AceList" ItemContainerStyle="{StaticResource ListItem}" SelectionChanged="AceList_SelectionChanged" Background="Transparent"
                              BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              PreviewMouseWheel="AceList_PreviewMouseWheel">
                         <ListBox.ItemTemplate>
